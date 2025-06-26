@@ -1,0 +1,44 @@
+---
+title: "Billboard Graphic"
+author: "Neelam Arshad"
+output: html_document
+execute:
+  echo: false
+  warning: false
+---
+
+
+```{r}
+# Load necessary packages
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(tidyr)
+})
+```
+
+
+```{r}
+# Reshape data to long format
+billboard_long <- billboard %>%
+  pivot_longer(cols = starts_with("wk"),
+               names_to = "week",
+               names_prefix = "wk",
+               values_to = "rank",
+               values_drop_na = TRUE) %>%
+  mutate(week = as.integer(week))
+
+# Plot the rank progression of a few popular songs
+billboard_long %>%
+  filter(track %in% c("Bye Bye Bye", "Oops!... I Did It Again", "Say My Name")) %>%
+  ggplot(aes(x = week, y = rank, color = track)) +
+  geom_line(size = 1.2) +
+  scale_y_reverse() +  # Because rank 1 is best
+  labs(
+    title = "Billboard Chart Performance Over Time",
+    x = "Week on Chart",
+    y = "Chart Rank (Lower is Better)",
+    color = "Track"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "top")
+```
